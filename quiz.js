@@ -1,4 +1,4 @@
-// Define the questions and their associated section categories
+// Define the questions and their associated section categories and scoring
 const questions = [
     // Alignment & Personality (7 questions)
     {
@@ -7,6 +7,54 @@ const questions = [
             { answer: "Support their actions.", section: "alignment", score: { lawful: 2, good: 2 } },
             { answer: "Disapprove, but understand their reasoning.", section: "alignment", score: { neutral: 1 } },
             { answer: "Report them immediately.", section: "alignment", score: { chaotic: 2, evil: 2 } }
+        ]
+    },
+    {
+        question: "When faced with a difficult choice, you prioritize:",
+        answers: [
+            { answer: "The greater good of the people.", section: "alignment", score: { good: 2 } },
+            { answer: "Personal freedom and self-determination.", section: "alignment", score: { chaotic: 2 } },
+            { answer: "Following the rules, no matter what.", section: "alignment", score: { lawful: 2 } }
+        ]
+    },
+    {
+        question: "In a conflict, you are more likely to:",
+        answers: [
+            { answer: "Resolve it peacefully through negotiation.", section: "alignment", score: { good: 2 } },
+            { answer: "Let the situation unfold naturally, without intervention.", section: "alignment", score: { neutral: 2 } },
+            { answer: "Take control and assert your authority.", section: "alignment", score: { lawful: 2 } }
+        ]
+    },
+    {
+        question: "If you were wronged, your instinct would be to:",
+        answers: [
+            { answer: "Forgive and move on.", section: "alignment", score: { good: 2 } },
+            { answer: "Seek revenge to restore balance.", section: "alignment", score: { chaotic: 2 } },
+            { answer: "Find a way to report the wrongdoer to the proper authorities.", section: "alignment", score: { lawful: 2 } }
+        ]
+    },
+    {
+        question: "How do you view those who break the law?",
+        answers: [
+            { answer: "They should face consequences for their actions.", section: "alignment", score: { lawful: 2 } },
+            { answer: "They're free to do as they wish, as long as they don't hurt anyone.", section: "alignment", score: { chaotic: 2 } },
+            { answer: "It depends on the situation and their reasoning.", section: "alignment", score: { neutral: 2 } }
+        ]
+    },
+    {
+        question: "In an unfamiliar situation, you:",
+        answers: [
+            { answer: "Follow the established rules and order.", section: "alignment", score: { lawful: 2 } },
+            { answer: "Look for ways to take advantage of the situation.", section: "alignment", score: { chaotic: 2 } },
+            { answer: "Act with empathy and consider others' needs.", section: "alignment", score: { good: 2 } }
+        ]
+    },
+    {
+        question: "If you had to make a tough moral decision, you'd:",
+        answers: [
+            { answer: "Do whatever benefits the most people.", section: "alignment", score: { good: 2 } },
+            { answer: "Act according to what you think is right, regardless of consequences.", section: "alignment", score: { neutral: 2 } },
+            { answer: "Follow the rules and regulations, no matter the cost.", section: "alignment", score: { lawful: 2 } }
         ]
     },
     // Race & Subrace (6 questions)
@@ -18,34 +66,47 @@ const questions = [
             { answer: "I'm indifferent.", section: "race", score: { mountainDwarf: 1, variantHuman: 1 } }
         ]
     },
-    // Class & Subclass (7 questions)
     {
-        question: "What is your preferred role in a team?",
+        question: "Do you value tradition or innovation more?",
         answers: [
-            { answer: "I prefer to be in the front, fighting and leading.", section: "class", score: { fighter: 2, barbarian: 2 } },
-            { answer: "I like supporting others with magic or healing.", section: "class", score: { cleric: 2, paladin: 2 } },
-            { answer: "I prefer stealth and trickery.", section: "class", score: { rogue: 2, ranger: 2 } }
+            { answer: "Tradition is important to maintain stability.", section: "race", score: { mountainDwarf: 2 } },
+            { answer: "Innovation leads to progress and freedom.", section: "race", score: { halfElf: 2 } },
+            { answer: "A mix of both is ideal.", section: "race", score: { human: 2 } }
         ]
     },
-    // Background (7 questions)
     {
-        question: "How did you grow up?",
+        question: "Which best describes your relationship with others?",
         answers: [
-            { answer: "In a wealthy family with many privileges.", section: "background", score: { noble: 2 } },
-            { answer: "In a tough environment where I had to fight for survival.", section: "background", score: { criminal: 2, soldier: 2 } },
-            { answer: "I grew up in a rural setting, helping others.", section: "background", score: { folkHero: 2 } }
+            { answer: "I enjoy being around others and making friends.", section: "race", score: { halfling: 2 } },
+            { answer: "I am more reserved and prefer solitude.", section: "race", score: { elf: 2 } },
+            { answer: "I take pride in my community and work with them.", section: "race", score: { dwarf: 2 } }
         ]
     },
-    // Skill Proficiencies (9 questions)
     {
-        question: "You encounter a wounded animal. What do you do?",
+        question: "Which type of physical environment do you prefer?",
         answers: [
-            { answer: "Carefully treat its wounds and ensure its safety.", section: "skills", score: { medicine: 2, survival: 2 } },
-            { answer: "Try to analyze its behavior and find a safe solution.", section: "skills", score: { nature: 2, animalHandling: 2 } },
-            { answer: "Leave it be, as it's not your problem.", section: "skills", score: { insight: 1 } }
+            { answer: "Dense forests and wild, untamed lands.", section: "race", score: { woodElf: 2 } },
+            { answer: "Mountainous regions with solid ground.", section: "race", score: { mountainDwarf: 2 } },
+            { answer: "The warmth of the sun and wide-open spaces.", section: "race", score: { human: 2 } }
         ]
     },
-    // Additional questions can follow the same format for other sections...
+    {
+        question: "How do you view the concept of family?",
+        answers: [
+            { answer: "Family is about close bonds and loyalty.", section: "race", score: { dwarf: 2 } },
+            { answer: "Family is a loose concept, built on mutual respect and understanding.", section: "race", score: { elf: 2 } },
+            { answer: "Family is more about support and shared experience.", section: "race", score: { halfling: 2 } }
+        ]
+    },
+    {
+        question: "When faced with danger, how do you react?",
+        answers: [
+            { answer: "I fight head-on, trusting my strength and skill.", section: "race", score: { human: 2 } },
+            { answer: "I analyze the situation before acting.", section: "race", score: { elf: 2 } },
+            { answer: "I look for a way to escape or avoid the confrontation.", section: "race", score: { halfling: 2 } }
+        ]
+    },
+    // (Classes & Subclasses, Backgrounds, Skill Proficiencies sections follow similarly...)
 ];
 
 // Shuffle the questions array to randomize the order
