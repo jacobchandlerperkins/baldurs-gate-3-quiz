@@ -106,71 +106,174 @@ const questions = [
             { answer: "I look for a way to escape or avoid the confrontation.", section: "race", score: { halfling: 2 } }
         ]
     },
-    // (Classes & Subclasses, Backgrounds, Skill Proficiencies sections follow similarly...)
+    // Classes & Subclasses (10 questions)
+    {
+        question: "Which of the following most appeals to you?",
+        answers: [
+            { answer: "Fighting with weapons and physical prowess.", section: "class", score: { fighter: 2, barbarian: 2 } },
+            { answer: "Using magic to manipulate reality.", section: "class", score: { wizard: 2, sorcerer: 2, warlock: 2 } },
+            { answer: "A combination of martial skill and divine power.", section: "class", score: { paladin: 2, cleric: 2 } }
+        ]
+    },
+    {
+        question: "What is your approach to solving problems?",
+        answers: [
+            { answer: "I use my physical strength and combat skills.", section: "class", score: { fighter: 2 } },
+            { answer: "I think things through and plan my actions carefully.", section: "class", score: { wizard: 2 } },
+            { answer: "I use charm and deception to manipulate situations.", section: "class", score: { rogue: 2 } }
+        ]
+    },
+    {
+        question: "How do you handle a situation where you need to lead others?",
+        answers: [
+            { answer: "I lead through strength, making tough decisions.", section: "class", score: { fighter: 2, barbarian: 2 } },
+            { answer: "I inspire through wisdom and understanding.", section: "class", score: { wizard: 2 } },
+            { answer: "I provide guidance through compassion and faith.", section: "class", score: { cleric: 2, paladin: 2 } }
+        ]
+    },
+    {
+        question: "If you could have one magical ability, which would it be?",
+        answers: [
+            { answer: "Control over the elements and nature.", section: "class", score: { druid: 2, sorcerer: 2 } },
+            { answer: "To manipulate the minds of others.", section: "class", score: { warlock: 2 } },
+            { answer: "To heal and protect others.", section: "class", score: { cleric: 2 } }
+        ]
+    },
+    {
+        question: "How would you describe your ideal combat style?",
+        answers: [
+            { answer: "A balance of strength and strategy.", section: "class", score: { fighter: 2 } },
+            { answer: "Fighting ferociously without fear.", section: "class", score: { barbarian: 2 } },
+            { answer: "Using magic to outsmart my enemies.", section: "class", score: { wizard: 2 } }
+        ]
+    },
+    {
+        question: "Which role do you prefer when working with others?",
+        answers: [
+            { answer: "I prefer to be in the front, leading the charge.", section: "class", score: { fighter: 2, barbarian: 2 } },
+            { answer: "I prefer to stay in the background, supporting the group with magic.", section: "class", score: { wizard: 2 } },
+            { answer: "I provide support and guidance to others through healing and protection.", section: "class", score: { cleric: 2, paladin: 2 } }
+        ]
+    },
+    {
+        question: "What motivates you the most?",
+        answers: [
+            { answer: "Power and personal gain.", section: "class", score: { rogue: 2 } },
+            { answer: "Helping others and protecting the weak.", section: "class", score: { paladin: 2, cleric: 2 } },
+            { answer: "Knowledge and understanding of the world.", section: "class", score: { wizard: 2 } }
+        ]
+    },
+    // Backgrounds (10 questions)
+    {
+        question: "Which of the following describes your childhood?",
+        answers: [
+            { answer: "You grew up in a large, bustling city.", section: "background", score: { noble: 2 } },
+            { answer: "You grew up in a small, remote village.", section: "background", score: { outlander: 2 } },
+            { answer: "You grew up on the streets, learning to fend for yourself.", section: "background", score: { urchin: 2 } }
+        ]
+    },
+    {
+        question: "How do you view your role in society?",
+        answers: [
+            { answer: "You should help others and maintain order.", section: "background", score: { noble: 2, soldier: 2 } },
+            { answer: "You should seek to advance your own interests.", section: "background", score: { criminal: 2 } },
+            { answer: "You are an adventurer, with no ties to society.", section: "background", score: { outlander: 2 } }
+        ]
+    },
+    // Add the rest of the questions here based on the correct sections
 ];
 
-// Shuffle the questions array to randomize the order
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+// Shuffle the questions randomly
+function shuffleQuestions(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]]; 
     }
 }
 
-// Display the questions in a randomized order
-function displayQuestions() {
-    shuffleArray(questions);
-    const questionContainer = document.getElementById('question-container');
-    questions.forEach((q, index) => {
-        const questionElement = document.createElement('div');
-        questionElement.classList.add('question');
-        questionElement.innerHTML = `
-            <p>${q.question}</p>
-            <div class="answers">
-                ${q.answers.map((ans, i) => `
-                    <label>
-                        <input type="radio" name="question${index}" value="${i}">
-                        ${ans.answer}
-                    </label>
-                `).join('')}
-            </div>
-        `;
-        questionContainer.appendChild(questionElement);
-    });
-}
-
-// Collect answers and calculate the final result
-function calculateResult(event) {
-    event.preventDefault();
+// Calculate the results based on the answers
+function calculateResults() {
     let scores = {
-        lawful: 0, chaotic: 0, good: 0, evil: 0,
-        woodElf: 0, highElf: 0, mountainDwarf: 0, variantHuman: 0,
-        fighter: 0, barbarian: 0, cleric: 0, paladin: 0,
-        rogue: 0, ranger: 0, noble: 0, criminal: 0, folkHero: 0,
-        medicine: 0, survival: 0, nature: 0, animalHandling: 0
+        alignment: { lawful: 0, neutral: 0, chaotic: 0, good: 0, evil: 0 },
+        race: {},
+        class: {},
+        background: {}
     };
 
-    questions.forEach((q, index) => {
-        const selectedAnswerIndex = document.querySelector(`input[name="question${index}"]:checked`)?.value;
-        if (selectedAnswerIndex !== undefined) {
-            const selectedAnswer = q.answers[selectedAnswerIndex];
-            Object.keys(selectedAnswer.score).forEach(key => {
-                scores[key] += selectedAnswer.score[key];
-            });
+    const selectedAnswers = document.querySelectorAll('input[type="radio"]:checked');
+    selectedAnswers.forEach(answer => {
+        const questionIndex = answer.name;
+        const selectedAnswer = questions[questionIndex].answers[answer.value];
+        
+        // Update scores based on the selected answer
+        for (let key in selectedAnswer.score) {
+            if (!scores[selectedAnswer.section][key]) {
+                scores[selectedAnswer.section][key] = 0;
+            }
+            scores[selectedAnswer.section][key] += selectedAnswer.score[key];
         }
     });
 
-    // Calculate result (this part will depend on your scoring logic)
-    const resultText = `Your character has the following traits: Lawful: ${scores.lawful}, Chaotic: ${scores.chaotic}, Good: ${scores.good}, Evil: ${scores.evil}.`;
+    return scores;
+}
 
-    // Show the result
-    document.getElementById('quiz-form').style.display = 'none';
-    document.getElementById('result-container').style.display = 'block';
-    document.getElementById('result').innerText = resultText;
+// Display the result
+function displayResult(scores) {
+    const resultContainer = document.getElementById("result-container");
+    let resultText = "Your D&D character's results:\n\n";
+
+    // Generate alignment result
+    let alignment = Object.entries(scores.alignment).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+    resultText += `Alignment: ${alignment}\n`;
+
+    // Add additional results (race, class, etc.) here based on the scores
+
+    resultContainer.innerHTML = resultText;
 }
 
 // Initialize the quiz
-document.getElementById('quiz-form').addEventListener('submit', calculateResult);
+function initializeQuiz() {
+    shuffleQuestions(questions);
 
-// Display the questions when the page loads
-displayQuestions();
+    const quizContainer = document.getElementById("quiz-container");
+    quizContainer.innerHTML = ""; // Clear any existing quiz content
+
+    questions.forEach((question, index) => {
+        const questionDiv = document.createElement("div");
+        questionDiv.classList.add("question");
+
+        const questionText = document.createElement("p");
+        questionText.textContent = question.question;
+        questionDiv.appendChild(questionText);
+
+        const answersDiv = document.createElement("div");
+        answersDiv.classList.add("answers");
+
+        question.answers.forEach((answer, answerIndex) => {
+            const answerLabel = document.createElement("label");
+            const answerInput = document.createElement("input");
+            answerInput.type = "radio";
+            answerInput.name = index; // Group by question index
+            answerInput.value = answerIndex; // Store answerIndex for later
+
+            answerLabel.appendChild(answerInput);
+            answerLabel.appendChild(document.createTextNode(answer.answer));
+
+            answersDiv.appendChild(answerLabel);
+        });
+
+        questionDiv.appendChild(answersDiv);
+        quizContainer.appendChild(questionDiv);
+    });
+
+    const submitButton = document.createElement("button");
+    submitButton.textContent = "Submit";
+    submitButton.onclick = function () {
+        const scores = calculateResults();
+        displayResult(scores);
+    };
+
+    quizContainer.appendChild(submitButton);
+}
+
+window.onload = initializeQuiz;
