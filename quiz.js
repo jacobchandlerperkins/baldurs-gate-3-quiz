@@ -11,7 +11,9 @@ function calculateRaceResults() {
         if (selectedAnswer) {
             const answerScore = question.answers[selectedAnswer.value].score;
             for (const [key, value] of Object.entries(answerScore)) {
-                scores[key] += value;
+                // Apply a weighting factor based on the question index
+                const weight = index < 3 ? 3 : index < 6 ? 2 : 1; // First 3 questions weigh more
+                scores[key] += value * weight;
             }
         }
     });
@@ -30,10 +32,18 @@ function displayRaceResult(scores) {
     // Filter subraces with the highest score
     const topRaces = Object.keys(scores).filter(race => scores[race] === highestScore);
 
-    // If no scores are non-zero, set a fallback message
-    let raceResult = "No dominant race determined.";
-    if (highestScore > 0) {
-        raceResult = topRaces.length === 1 ? topRaces[0] : "Mixed Heritage";
+    // Determine race result
+    let raceResult;
+
+    if (topRaces.length === 1) {
+        raceResult = topRaces[0]; // Clear winner
+    } else {
+        // Use predefined priority to break ties
+        const priority = [
+            "woodElf", "highElf", "drow", "forestGnome", "halfling", "dwarf", "duergar",
+            "human", "tiefling", "dragonborn", "orc"
+        ];
+        raceResult = topRaces.sort((a, b) => priority.indexOf(a) - priority.indexOf(b))[0];
     }
 
     // Debugging: Log the result calculation process
