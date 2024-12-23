@@ -99,15 +99,18 @@ function renderRaceQuestions() {
         answersDiv.classList.add("answers");
 
         question.answers.forEach((answer, answerIndex) => {
-            const answerLabel = document.createElement("label");
             const answerInput = document.createElement("input");
+            const answerId = `race-${index}-${answerIndex}`;
             answerInput.type = "radio";
-            answerInput.name = `race-${index}`; // Group by question index
-            answerInput.value = answerIndex; // Store answerIndex for later scoring
+            answerInput.name = `race-${index}`;
+            answerInput.value = answerIndex;
+            answerInput.id = answerId;
 
-            answerLabel.appendChild(answerInput);
-            answerLabel.appendChild(document.createTextNode(answer.answer));
+            const answerLabel = document.createElement("label");
+            answerLabel.htmlFor = answerId;
+            answerLabel.textContent = answer.answer;
 
+            answersDiv.appendChild(answerInput);
             answersDiv.appendChild(answerLabel);
         });
 
@@ -123,46 +126,43 @@ function renderRaceQuestions() {
 
 // Function to calculate the results for Races and Subraces
 function calculateRaceResults() {
-    // Initialize scores for all subraces
     let scores = {
         woodElf: 0, highElf: 0, drow: 0, forestGnome: 0, halfling: 0, dwarf: 0, duergar: 0, 
         human: 0, tiefling: 0, dragonborn: 0, orc: 0
     };
 
-    // Loop through questions and tally scores based on selected answers
+    let allAnswered = true;
+
     raceQuestions.forEach((question, index) => {
         const selectedAnswer = document.querySelector(`input[name="race-${index}"]:checked`);
         if (selectedAnswer) {
             const answerScore = question.answers[selectedAnswer.value].score;
             for (const [key, value] of Object.entries(answerScore)) {
-                // Apply a weighting factor based on the question index
-                const weight = index < 3 ? 3 : index < 6 ? 2 : 1; // First 3 questions weigh more
+                const weight = index < 3 ? 3 : index < 6 ? 2 : 1;
                 scores[key] += value * weight;
             }
+        } else {
+            allAnswered = false;
         }
     });
 
-    // Debugging: Log scores to ensure they are updating
-    console.log("Final Scores:", scores);
+    if (!allAnswered) {
+        alert("Please answer all the questions before submitting.");
+        return;
+    }
 
-    // Determine the race result
     displayRaceResult(scores);
 }
 
+// Function to display the race result
 function displayRaceResult(scores) {
-    // Find the highest score
     const highestScore = Math.max(...Object.values(scores));
-
-    // Filter subraces with the highest score
     const topRaces = Object.keys(scores).filter(race => scores[race] === highestScore);
 
-    // Determine race result
     let raceResult;
-
     if (topRaces.length === 1) {
-        raceResult = topRaces[0]; // Clear winner
+        raceResult = topRaces[0];
     } else {
-        // Use predefined priority to break ties
         const priority = [
             "woodElf", "highElf", "drow", "forestGnome", "halfling", "dwarf", "duergar",
             "human", "tiefling", "dragonborn", "orc"
@@ -170,14 +170,18 @@ function displayRaceResult(scores) {
         raceResult = topRaces.sort((a, b) => priority.indexOf(a) - priority.indexOf(b))[0];
     }
 
-    // Debugging: Log the result calculation process
-    console.log("Top Races:", topRaces, "Highest Score:", highestScore);
-
-    // Display the result
     const quizContainer = document.getElementById("quiz-container");
-    quizContainer.innerHTML = ""; // Clear the quiz content
+    quizContainer.innerHTML = "";
 
     const resultText = document.createElement("p");
     resultText.textContent = `Your race is: ${raceResult}`;
     quizContainer.appendChild(resultText);
+
+    const scoreDetails = document.createElement("ul");
+    Object.entries(scores).forEach(([race, score]) => {
+        const scoreItem = document.createElement("li");
+        scoreItem.textContent = `${race}: ${score}`;
+        scoreDetails.appendChild(scoreItem);
+    });
+    quizContainer.appendChild(scoreDetails);
 }
