@@ -1,91 +1,28 @@
-// Define the Race & Subrace questions and scoring
+// Define the questions for Race & Subrace
 const raceQuestions = [
     {
         question: "You feel most at home in:",
         answers: [
-            { answer: "Forests and nature.", score: { woodElf: 2, forestGnome: 2 } },
-            { answer: "Bustling cities.", score: { human: 2, highElf: 2 } },
-            { answer: "Underground caves.", score: { drow: 2, duergar: 2 } }
+            { answer: "Forests and nature.", score: { woodElf: 1, forestGnome: 1 } },
+            { answer: "Bustling cities.", score: { human: 1, highElf: 1 } },
+            { answer: "Underground caves.", score: { drow: 1, duergar: 1 } }
         ]
     },
     {
         question: "How would others describe your personality?",
         answers: [
-            { answer: "Charming and persuasive.", score: { halfElf: 2, tiefling: 2 } },
-            { answer: "Quiet and thoughtful.", score: { halfling: 2, highElf: 2 } },
-            { answer: "Strong-willed and determined.", score: { dwarf: 2, dragonborn: 2 } }
+            { answer: "Charming and persuasive.", score: { halfElf: 1, tiefling: 1 } },
+            { answer: "Quiet and thoughtful.", score: { halfling: 1, highElf: 1 } },
+            { answer: "Strong-willed and determined.", score: { dwarf: 1, dragonborn: 1 } }
         ]
     },
-    {
-        question: "What is your preferred method of solving conflicts?",
-        answers: [
-            { answer: "Through diplomacy and understanding.", score: { halfElf: 2, human: 2 } },
-            { answer: "With cleverness and creativity.", score: { forestGnome: 2, halfling: 2 } },
-            { answer: "By force, when necessary.", score: { orc: 2, dragonborn: 2 } }
-        ]
-    },
-    {
-        question: "Which best describes your appearance?",
-        answers: [
-            { answer: "Elegant and ethereal.", score: { highElf: 2, halfElf: 2 } },
-            { answer: "Rugged and hearty.", score: { dwarf: 2, duergar: 2 } },
-            { answer: "Exotic and mysterious.", score: { drow: 2, tiefling: 2 } }
-        ]
-    },
-    {
-        question: "What is your strongest skill?",
-        answers: [
-            { answer: "Dexterity and precision.", score: { woodElf: 2, halfling: 2 } },
-            { answer: "Strength and endurance.", score: { orc: 2, dragonborn: 2 } },
-            { answer: "Intelligence and problem-solving.", score: { forestGnome: 2, highElf: 2 } }
-        ]
-    },
-    {
-        question: "How do you view tradition and culture?",
-        answers: [
-            { answer: "Respect and uphold them.", score: { dwarf: 2, duergar: 2 } },
-            { answer: "Adapt and innovate.", score: { human: 2, forestGnome: 2 } },
-            { answer: "Challenge and reject them.", score: { tiefling: 2, drow: 2 } }
-        ]
-    },
-    {
-        question: "What motivates you the most?",
-        answers: [
-            { answer: "Protecting loved ones and your home.", score: { halfling: 2, woodElf: 2 } },
-            { answer: "Proving your strength and abilities.", score: { dragonborn: 2, orc: 2 } },
-            { answer: "Seeking knowledge and discovery.", score: { highElf: 2, forestGnome: 2 } }
-        ]
-    },
-    {
-        question: "How do you handle danger?",
-        answers: [
-            { answer: "With caution and planning.", score: { dwarf: 2, halfling: 2 } },
-            { answer: "With bravery and decisiveness.", score: { dragonborn: 2, orc: 2 } },
-            { answer: "With cunning and stealth.", score: { drow: 2, tiefling: 2 } }
-        ]
-    },
-    {
-        question: "Which environment do you prefer?",
-        answers: [
-            { answer: "Woodlands and natural areas.", score: { woodElf: 2, forestGnome: 2 } },
-            { answer: "Urban settlements.", score: { human: 2, highElf: 2 } },
-            { answer: "Mountains or caves.", score: { dwarf: 2, duergar: 2 } }
-        ]
-    },
-    {
-        question: "What role do you play in a group?",
-        answers: [
-            { answer: "The leader or decision-maker.", score: { human: 2, dragonborn: 2 } },
-            { answer: "The supporter or problem-solver.", score: { forestGnome: 2, halfling: 2 } },
-            { answer: "The wildcard or disruptor.", score: { tiefling: 2, drow: 2 } }
-        ]
-    }
+    // More questions go here...
 ];
 
 // Function to render the questions on the page
-function renderRaceQuestions() {
+function renderQuestions() {
     const quizContainer = document.getElementById("quiz-container");
-    quizContainer.innerHTML = ""; // Clear any existing quiz content
+    quizContainer.innerHTML = ""; // Clear any existing content
 
     raceQuestions.forEach((question, index) => {
         const questionDiv = document.createElement("div");
@@ -99,89 +36,51 @@ function renderRaceQuestions() {
         answersDiv.classList.add("answers");
 
         question.answers.forEach((answer, answerIndex) => {
-            const answerInput = document.createElement("input");
-            const answerId = `race-${index}-${answerIndex}`;
-            answerInput.type = "radio";
-            answerInput.name = `race-${index}`;
-            answerInput.value = answerIndex;
-            answerInput.id = answerId;
-
             const answerLabel = document.createElement("label");
-            answerLabel.htmlFor = answerId;
-            answerLabel.textContent = answer.answer;
+            const answerInput = document.createElement("input");
+            answerInput.type = "radio";
+            answerInput.name = `race-${index}`; // Group by question index
+            answerInput.value = answerIndex; // Store answerIndex for later scoring
 
-            answersDiv.appendChild(answerInput);
+            answerLabel.appendChild(answerInput);
+            answerLabel.appendChild(document.createTextNode(answer.answer));
+
             answersDiv.appendChild(answerLabel);
         });
 
         questionDiv.appendChild(answersDiv);
         quizContainer.appendChild(questionDiv);
     });
-
-    const submitButton = document.createElement("button");
-    submitButton.textContent = "Submit";
-    submitButton.onclick = calculateRaceResults;
-    quizContainer.appendChild(submitButton);
 }
 
-// Function to calculate the results for Races and Subraces
-function calculateRaceResults() {
+// Function to calculate the results
+function calculateResults() {
     let scores = {
-        woodElf: 0, highElf: 0, drow: 0, forestGnome: 0, halfling: 0, dwarf: 0, duergar: 0, 
-        human: 0, tiefling: 0, dragonborn: 0, orc: 0
+        woodElf: 0, highElf: 0, drow: 0, forestGnome: 0, halfling: 0, dwarf: 0, duergar: 0,
+        human: 0, tiefling: 0, dragonborn: 0
     };
-
-    let allAnswered = true;
 
     raceQuestions.forEach((question, index) => {
         const selectedAnswer = document.querySelector(`input[name="race-${index}"]:checked`);
         if (selectedAnswer) {
             const answerScore = question.answers[selectedAnswer.value].score;
             for (const [key, value] of Object.entries(answerScore)) {
-                const weight = index < 3 ? 3 : index < 6 ? 2 : 1;
-                scores[key] += value * weight;
+                scores[key] += value;
             }
-        } else {
-            allAnswered = false;
         }
     });
 
-    if (!allAnswered) {
-        alert("Please answer all the questions before submitting.");
-        return;
-    }
-
-    displayRaceResult(scores);
-}
-
-// Function to display the race result
-function displayRaceResult(scores) {
+    // Find the highest score
     const highestScore = Math.max(...Object.values(scores));
     const topRaces = Object.keys(scores).filter(race => scores[race] === highestScore);
 
-    let raceResult;
-    if (topRaces.length === 1) {
-        raceResult = topRaces[0];
-    } else {
-        const priority = [
-            "woodElf", "highElf", "drow", "forestGnome", "halfling", "dwarf", "duergar",
-            "human", "tiefling", "dragonborn", "orc"
-        ];
-        raceResult = topRaces.sort((a, b) => priority.indexOf(a) - priority.indexOf(b))[0];
-    }
-
-    const quizContainer = document.getElementById("quiz-container");
-    quizContainer.innerHTML = "";
-
-    const resultText = document.createElement("p");
-    resultText.textContent = `Your race is: ${raceResult}`;
-    quizContainer.appendChild(resultText);
-
-    const scoreDetails = document.createElement("ul");
-    Object.entries(scores).forEach(([race, score]) => {
-        const scoreItem = document.createElement("li");
-        scoreItem.textContent = `${race}: ${score}`;
-        scoreDetails.appendChild(scoreItem);
-    });
-    quizContainer.appendChild(scoreDetails);
+    // Display the result
+    const resultContainer = document.getElementById("result");
+    resultContainer.textContent = `Your race is: ${topRaces[0]}`;
 }
+
+// Initializing the quiz
+document.getElementById("submit-button").addEventListener("click", calculateResults);
+
+// Render the questions on page load
+renderQuestions();
